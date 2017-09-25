@@ -3,6 +3,7 @@ const http = require('http')
 
 var app = express()
 
+// Perform two sequential calls over http to the two APIs (redis and postgres)
 app.get('/', function(req, res, next) {
   http.get({
     host: 'redisapi',
