@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "express": "^4.15.5"
+    "express": "^4.15.5",
+    "opentracing": "^0.14.1",
+    "@risingstack/opentracing-auto": "^1.4.3",
+    "@risingstack/opentracing-metrics-tracer": "^2.0.1",
+    "jaeger-client": "^3.5.3"
   }
 }
