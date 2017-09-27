@@ -36,7 +36,7 @@ const http = require('http')
 var app = express()
 
 // Perform two sequential calls over http to the two APIs (redis and postgres)
-app.get('/orchestrate', (req, res, next) => {
+app.get('/orchestrate', (req, res) => {
   // http.get({host: 'redisapi', port: 8081, path: '/counter'}, (redisResponse) => {
   http.get({host: 'localhost', port: 8081, path: '/counter'}, (redisResponse) => {
     var redisBody = ''
@@ -47,16 +47,16 @@ app.get('/orchestrate', (req, res, next) => {
         var pgBody = ''
         pgResponse.on('data', (d) => { pgBody += d }) // Consume chunks
         pgResponse.on('end', () => {
-          res.send('Redis counter: ' + redisBody + '\n' + 'PG data: ' + pgBody + '\n')
+          res.end('Redis counter: ' + redisBody + '\n' + 'PG data: ' + pgBody + '\n')
         })
       }).on('error', (e) => {
         res.status(500)
-        res.send('Some Error Message')
+        res.end('Some Error Message')
       })
     })
   }).on('error', (e) => {
     res.status(500)
-    res.send('Some Other Error Message')
+    res.end('Some Other Error Message')
   })
 })
 

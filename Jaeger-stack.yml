@@ -2,19 +2,19 @@ version: '3.3'
 
 services:
 
-  nodejs:
-    image: mimr001/jaegerpocnodejs
-    networks:
-      - service-discovery-network
-    ports:
-      - 8080:8080
+#  nodejs:
+#    image: mimr001/jaegerpocnodejs
+#    networks:
+#      - service-discovery-network
+#    ports:
+#      - 8080:8080
 
-  redisapi:
-    image: mimr001/jaegerpocredisapi
-    networks:
-      - service-discovery-network
-    ports:
-      - 8081:8081
+#  redisapi:
+#    image: mimr001/jaegerpocredisapi
+#    networks:
+#      - service-discovery-network
+#    ports:
+#      - 8081:8081
 
   redis:
     image: redis
@@ -23,12 +23,12 @@ services:
     ports:
       - 6379:6379
 
-  postgresapi:
-    image: mimr001/jaegerpocpostgresapi
-    networks:
-      - service-discovery-network
-    ports:
-      - 8082:8082
+#  postgresapi:
+#    image: mimr001/jaegerpocpostgresapi
+#    networks:
+#      - service-discovery-network
+#    ports:
+#      - 8082:8082
 
   postgres:
     image: postgres
