@@ -2,26 +2,35 @@ version: '3.3'
 
 services:
 
-#  nodejs:
-#    image: wingnut/jaegerpocnodejs:1.0
-#    networks:
-#      - service-discovery-network
-#    ports:
-#      - 8080:8080
-#
-#  redisapi:
-#    image: wingnut/jaegerpocredisapi:1.0
-#    networks:
-#      - service-discovery-network
-#    ports:
-#      - 8081:8081
-#
-#  postgresapi:
-#    image: wingnut/jaegerpocpostgresapi:1.0
-#    networks:
-#      - service-discovery-network
-#    ports:
-#      - 8082:8082
+  nodejs:
+    image: wingnut/jaegerpoc_nodejs:1.0
+    networks:
+      - service-discovery-network
+    ports:
+      - 8080:8080
+    environment:
+      - JAEGER_AGENT_UDP_HOST
+      - JAEGER_AGENT_UDP_PORT
+
+  redisapi:
+    image: wingnut/jaegerpoc_redisapi:1.0
+    networks:
+      - service-discovery-network
+    ports:
+      - 8081:8081
+    environment:
+      - JAEGER_AGENT_UDP_HOST
+      - JAEGER_AGENT_UDP_PORT
+
+  postgresapi:
+    image: wingnut/jaegerpoc_postgresapi:1.0
+    networks:
+      - service-discovery-network
+    ports:
+      - 8082:8082
+    environment:
+      - JAEGER_AGENT_UDP_HOST
+      - JAEGER_AGENT_UDP_PORT
 
   redis:
     image: redis:4.0.2

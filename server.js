@@ -7,14 +7,17 @@ const Instrument = require('@risingstack/opentracing-auto')
 // Jaeger tracer (standard distributed tracing)
 const jaeger = require('jaeger-client')
 const UDPSender = require('jaeger-client/dist/src/reporters/udp_sender').default
-const sampler = new jaeger.RateLimitingSampler(1)
+const sampler = new jaeger.RateLimitingSampler(10)
 // Need this since the Jaeger server parts (reporter, collector, storage etc) are running outside the scope of our
 // Docker stack in this PoC. Real case scenario, the Jaeger server parts will either run in the same
 // Docker stack or in a separate Docker stack but on the same host to avoid network latency to the reporter
 const reporter = new jaeger.RemoteReporter(new UDPSender({
+  // host: 'ec2-54-93-196-139.eu-central-1.compute.amazonaws.com', // Directly on EC2 Node for now...
   // host: 'docker.for.mac.localhost',
-  host: 'localhost',
-  port: 6832
+  // host: 'localhost',
+  // port: 6832
+  host: process.env.JAEGER_AGENT_UDP_HOST,
+  port: process.env.JAEGER_AGENT_UDP_PORT
 }))
 const jaegerTracer = new jaeger.Tracer('jaeger-poc-nodejs-jaeger-tracer', reporter, sampler)
 
@@ -35,15 +38,18 @@ const http = require('http')
 
 var app = express()
 
+console.log("Jaeger UDP host:" + process.env.JAEGER_AGENT_UDP_HOST)
+console.log("Jaeger UDP port:" + process.env.JAEGER_AGENT_UDP_PORT)
+
 // Perform two sequential calls over http to the two APIs (redis and postgres)
-app.get('/orchestrate', (req, res) => {
-  // http.get({host: 'redisapi', port: 8081, path: '/counter'}, (redisResponse) => {
-  http.get({host: 'localhost', port: 8081, path: '/counter'}, (redisResponse) => {
+app.get('/orchestrate', (req, res, next) => {
+  http.get({host: 'redisapi', port: 8081, path: '/counter'}, (redisResponse) => {
+  // http.get({host: 'localhost', port: 8081, path: '/counter'}, (redisResponse) => {
     var redisBody = ''
     redisResponse.on('data', (d) => { redisBody += d }) // Consume chunks
     redisResponse.on('end', () => {
-      // http.get({host: 'postgresapi', port: 8082, path: '/pgdata'}, (pgResponse) => {
-      http.get({host: 'localhost', port: 8082, path: '/pgdata'}, (pgResponse) => {
+      http.get({host: 'postgresapi', port: 8082, path: '/pgdata'}, (pgResponse) => {
+      // http.get({host: 'localhost', port: 8082, path: '/pgdata'}, (pgResponse) => {
         var pgBody = ''
         pgResponse.on('data', (d) => { pgBody += d }) // Consume chunks
         pgResponse.on('end', () => {
